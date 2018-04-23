@@ -85,11 +85,11 @@ public class Hand {
 	 * @param index
 	 */
 	public void buildPart(int index) {
-		handScorecard.buildPart(int index);
+		handScorecard.buildPart(index);
 	}
 	
 	public boolean checkCommodityNotFull(int index) {
-		return handScorecard.checkCommidities(int index);
+		return handScorecard.checkCommodities(index);
 	}
 	
 }
