@@ -1,15 +1,13 @@
 import java.util.Arrays;
 import java.util.Random;
 public class Hand {
-	public enum Resources {Fuel, Hull_Parts, Crew_Member, Electronics, Glass, Chance;
+	public enum Resources {Fuel, Hull_Parts, Crew_Member, Electronics, Glass;
 						   private static Random ran = new Random();
 						   public static Resources randomResource() { //This method is used to get random resources
 							   return Resources.values()[ran.nextInt(6)];};
 						   }
 	Resources[] playerResources;
-	boolean[] partsBuilt = new boolean[10]; //The first 9 elements are reserved for the rocket's parts.
-											//The tenth element is reserved for if the rocket is complete
-	int[] commodities = new int[2]; //This is to keep track of the crew members and fuel
+	Scorecard handScorecard;
 	private final int HAND_SIZE = 5;
 	
 	public Hand() {
@@ -17,8 +15,7 @@ public class Hand {
 		for(int i = 0; i < HAND_SIZE; i++) {
 			playerResources[i] = Resources.randomResource();
 		}
-		for(int i = 0; i < partsBuilt.length; i++)
-			partsBuilt[i] = false;
+		handScorecard = new Scorecard();
 	}
 	
 	/**
@@ -79,7 +76,7 @@ public class Hand {
 	 * @return Whether the line is taken
 	 */
 	public boolean checkPartBuilt(int index) {
-		return partsBuilt[index];
+		return handScorecard.checkPartBuilt(index);
 	}
 	
 	/**
@@ -88,7 +85,11 @@ public class Hand {
 	 * @param index
 	 */
 	public void buildPart(int index) {
-		partsBuilt[index] = true;
+		handScorecard.buildPart(int index);
+	}
+	
+	public boolean checkCommodityNotFull(int index) {
+		return handScorecard.checkCommidities(int index);
 	}
 	
 }
