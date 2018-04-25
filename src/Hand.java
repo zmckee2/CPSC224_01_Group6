@@ -88,8 +88,45 @@ public class Hand {
 		handScorecard.buildPart(index);
 	}
 	
-	public boolean checkCommodityNotFull(int index) {
-		return handScorecard.checkCommodities(index);
+	/**
+	 * checkCrewFull
+	 * This method checks the hand's scorecard to make sure there are 3 or less crew members.
+	 * @param index
+	 * @return True if there are already 4 crew members, else returns false
+	 */
+	public boolean checkCrewFull(int index) {
+		return handScorecard.checkCrewFull(index);
+	}
+	
+	/**
+	 * recordFinalDistance
+	 * This method returns the final distance for a player determined in space phase.
+	 * Records said distance to the hand's scorecard
+	 * @param int distance: The distance determined in spacephase
+	 */
+	public void recordFinalDistance(int distance) {
+		handScorecard.recordFinalDistance(distance);
+	}
+	
+	/**
+	 * readScore
+	 * Method to be used in spacephase. Returns an int array containing numbers needed in spacephase.
+	 * scores[0] : Fuel, scores[1] : Crew Members, scores[2] : thruster tier
+	 * @return int[] scores: defined above
+	 */
+	public int[] readScore() {
+		return handScorecard.readScores();
+	}
+	
+	
+	/**
+	 * checkRocketBuilt
+	 * This method returns if the rocket is complete.
+	 * A complete rocket has at least tier one of each rocket part (thruster, fuel reserves, cockpit)
+	 * @return boolean rocketComplete: True if the rocket is completly built, false if not
+	 */
+	public boolean checkRocketBuilt() {
+		return handScorecard.checkRocketComplete();
 	}
 	
 }
