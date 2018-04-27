@@ -1,15 +1,13 @@
 import java.util.Arrays;
 import java.util.Random;
 public class Hand {
-	public enum Resources {Fuel, Hull_Parts, Crew_Member, Electronics, Glass, Chance;
+	public enum Resources {Fuel, Hull_Parts, Crew_Member, Electronics, Glass;
 						   private static Random ran = new Random();
 						   public static Resources randomResource() { //This method is used to get random resources
 							   return Resources.values()[ran.nextInt(6)];};
 						   }
 	Resources[] playerResources;
-	boolean[] partsBuilt = new boolean[10]; //The first 9 elements are reserved for the rocket's parts.
-											//The tenth element is reserved for if the rocket is complete
-	int[] commodities = new int[2]; //This is to keep track of the crew members and fuel
+	Scorecard handScorecard;
 	private final int HAND_SIZE = 5;
 	
 	public Hand() {
@@ -17,8 +15,7 @@ public class Hand {
 		for(int i = 0; i < HAND_SIZE; i++) {
 			playerResources[i] = Resources.randomResource();
 		}
-		for(int i = 0; i < partsBuilt.length; i++)
-			partsBuilt[i] = false;
+		handScorecard = new Scorecard();
 	}
 	
 	/**
@@ -79,7 +76,7 @@ public class Hand {
 	 * @return Whether the line is taken
 	 */
 	public boolean checkPartBuilt(int index) {
-		return partsBuilt[index];
+		return handScorecard.checkPartBuilt(index);
 	}
 	
 	/**
@@ -88,7 +85,48 @@ public class Hand {
 	 * @param index
 	 */
 	public void buildPart(int index) {
-		partsBuilt[index] = true;
+		handScorecard.buildPart(index);
+	}
+	
+	/**
+	 * checkCrewFull
+	 * This method checks the hand's scorecard to make sure there are 3 or less crew members.
+	 * @param index
+	 * @return True if there are already 4 crew members, else returns false
+	 */
+	public boolean checkCrewFull(int index) {
+		return handScorecard.checkCrewFull(index);
+	}
+	
+	/**
+	 * recordFinalDistance
+	 * This method returns the final distance for a player determined in space phase.
+	 * Records said distance to the hand's scorecard
+	 * @param int distance: The distance determined in spacephase
+	 */
+	public void recordFinalDistance(int distance) {
+		handScorecard.recordFinalDistance(distance);
+	}
+	
+	/**
+	 * readScore
+	 * Method to be used in spacephase. Returns an int array containing numbers needed in spacephase.
+	 * scores[0] : Fuel, scores[1] : Crew Members, scores[2] : thruster tier
+	 * @return int[] scores: defined above
+	 */
+	public int[] readScore() {
+		return handScorecard.readScores();
+	}
+	
+	
+	/**
+	 * checkRocketBuilt
+	 * This method returns if the rocket is complete.
+	 * A complete rocket has at least tier one of each rocket part (thruster, fuel reserves, cockpit)
+	 * @return boolean rocketComplete: True if the rocket is completly built, false if not
+	 */
+	public boolean checkRocketBuilt() {
+		return handScorecard.checkRocketComplete();
 	}
 	
 	public int numberOfHullParts(){
