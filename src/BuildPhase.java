@@ -1,12 +1,25 @@
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.swing.*;
 
-public class BuildPhase {
+public class BuildPhase implements JFrame{
 	
 	Hand[] players;
 	int numPlayers;
 	
+	public static void main(String[] args){
+		BuildPhase b = new BuildPhase(Hand );
+	}
+	
 	public BuildPhase(Hand[] initPlayers){
 		players = initPlayers;
 		numPlayers = players.length;
+		
+		this.setSize(400); // parameter
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		Toolkit tk = Toolkit.getDefaultToolkit;
+		Dimension dim = tk.getScreenSize();
 	}
 	
 	public void playBuild(Hand[] hArr){ // this is basically the main method of BuildPhase
