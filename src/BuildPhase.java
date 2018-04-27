@@ -15,11 +15,10 @@ public class BuildPhase implements JFrame{
 		players = initPlayers;
 		numPlayers = players.length;
 		
-		this.setSize(400); // parameter
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-		Toolkit tk = Toolkit.getDefaultToolkit;
-		Dimension dim = tk.getScreenSize();
+		JPanel panel = new JPanel();
+		
+		
+		
 	}
 	
 	public void playBuild(Hand[] hArr){ // this is basically the main method of BuildPhase
@@ -41,6 +40,24 @@ public class BuildPhase implements JFrame{
 		for(int i = 0; i < 5; i++){
 			h.playerResources[i].randomResource();
 		}
+	}
+	
+	private void swingInit(){
+		this.setSize(400); // parameter
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		
+		Toolkit tk = Toolkit.getDefaultToolkit;
+		Dimension dim = tk.getScreenSize();
+		
+		int xPos = (dim.width/2) - (this.getWidth()/2);
+		int yPos = (dim.height/2) - (this.getHeight()/2);
+		
+		this.setLocation(xPos, yPos);
+		this.setResizable(false);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		this.setTitle("SPACE RACE: Build Phase");
 	}
 	
 	private void printBuildOptions(Hand h){
