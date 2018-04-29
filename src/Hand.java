@@ -129,5 +129,50 @@ public class Hand {
 		return handScorecard.checkRocketComplete();
 	}
 	
+	public int numberOfHullParts(){
+		int num = 0;
+		for(int i = 0; i < 5; i++){
+			if(playerResources[i] == Hull_Parts)
+				num++;
+		}
+		return num;
+	}
+	
+	public int numberOfElectronics(){
+		int num = 0;
+		for(int i = 0; i < 5; i++){
+			if(playerResources[i] == Electronics)
+				num++;
+		}
+		return num;
+	}
+	
+	public int numberOfGlass(){
+		int num = 0;
+		for(int i = 0; i < 5; i++){
+			if(playerResources[i] == Glass)
+				num++;
+		}
+		return num;
+	}
+	
+	public int numberOfCrewMembers(){
+		int num = 0;
+		for(int i = 0; i < 5; i++){
+			if(playerResources[i] == Crew_Member)
+				num++;
+		}
+		return num;
+	}
+	
+	public int numberOfFuel(){
+		int num = 0;
+		for(int i = 0; i < 5; i++){
+			if(playerResources[i] == Fuel)
+				num++;
+		}
+		return num;
+	}
+	
 }
 
