@@ -19,6 +19,10 @@ public class SpacePhase {
         System.out.println(players[0].readScore());
     }
 
+    // index of int array readScore()
+    // 0: crew members
+    // 1: fuel
+    // 2:
     // constructor:
     //  with objects Hand[] - array of hands(each player),
     //      readScore()- returns array of integers representing ship parts
