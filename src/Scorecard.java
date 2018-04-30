@@ -88,11 +88,14 @@ public class Scorecard {
 		finalDistance = distance;
 	}
 	
+	public int getFinalDistance() {
+		return finalDistance;
+	}
 	//Will add documentation, refer to readScores in hand
 	public int[] readScores() {
-		int[] scores = new int[2];
-		scores[0] = commodities[1]; //Crew members
-		scores[1] = commodities[0]; //Fuel
+		int[] scores = new int[3];
+		scores[0] = commodities[0]; //Crew members
+		scores[1] = commodities[1]; //Fuel
 		int thrusterTier = 1;
 		if(partsBuilt[1])
 			thrusterTier++;

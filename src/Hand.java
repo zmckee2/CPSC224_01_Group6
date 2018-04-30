@@ -93,7 +93,7 @@ public class Hand {
 	 * This method will add a commodity to the hand's scorecard. 0 adds crew member, 1 adds fuel
 	 * @param index
 	 */
-	public void addCommoditiy(int index) {
+	public void addCommodity(int index) {
 		handScorecard.addCommodity(index);
 	}
 	
@@ -147,7 +147,7 @@ public class Hand {
 	/**
 	 * readScore
 	 * Method to be used in spacephase. Returns an int array containing numbers needed in spacephase.
-	 * scores[0] : Fuel, scores[1] : Crew Members, scores[2] : thruster tier
+	 * scores[0] : Crew Members, scores[1] : Fuel , scores[2] : thruster tier
 	 * @return int[] scores: defined above
 	 */
 	public int[] readScore() {
@@ -163,6 +163,10 @@ public class Hand {
 	 */
 	public boolean checkRocketBuilt() {
 		return handScorecard.checkRocketComplete();
+	}
+	
+	public int getFinalDistance() {
+		return handScorecard.getFinalDistance();
 	}
 	
 	public int numberOfHullParts(){
