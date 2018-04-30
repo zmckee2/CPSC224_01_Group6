@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.GridLayout;
 
 public class PlayGame extends JFrame {
-	private final int DEFAULT_WIDTH = 900;
+	private final int DEFAULT_WIDTH = 1000;
 	private final int DEFAULT_HEIGHT = 800;
 	private JButton play, instructions, exitInstructions, goToBuildInst, goToSpaceInst, backToBuildInst, backToIntroInst, start;
 	private JLabel title;
@@ -176,7 +176,8 @@ public class PlayGame extends JFrame {
 								 "During space phase you will fly your rocket into space with the hopes of getting further than any other player\n" +
 								 "Make sure during build phase to complete your rocket, lest you don't want to particitpate in space phase.\n" +
 								 "Once both phases have been played, a final winner will be decided based of who flew the furthst in space phase.\n" +
-								 "To fly furthest, you will need to build the best rocket you can in build phase and take risks during space phase.");
+								 "To fly furthest, you will need to build the best rocket you can in build phase and take risks during space phase.\n" +
+								 "The final winner is decided by whoever flew the furthest in space phase.");
 				
 	}
 	
@@ -202,7 +203,7 @@ public class PlayGame extends JFrame {
 								 "	1 Fuel:      Fuel, Fuel, Fuel\n" +
 								 "	2 Fuel:      Fuel, Fuel, Fuel, Fuel\n" +
 								 "	3 Fuel:      Fuel, Fuel, Fuel, Fuel, Fuel\n" +
-								 "You will also be givin 5 fuel once the fuel reserves are built and one crew member once the cockpit is build\n");
+								 "You will also be given 5 fuel once the fuel reserves are built and one crew member once the cockpit is build\n");
 	}
 	
 	/**
@@ -210,7 +211,17 @@ public class PlayGame extends JFrame {
 	 * This method changes the instructions text to the space phase instructions
 	 */
 	private void switchToSpaceText() {
-		instructionText.setText("Placeholder text");
+		instructionText.setText("In space phase you fly your rocket as far as you can into space.\n" +
+								"The amount of turns you have is based on how much fuel you obtained in build phase.\n" +
+								"The base distance you travel each turn is based off what tier of thruster you created.\n" +
+								"The chance you have for an accident is based of how many crew members you have. \n" +
+								"If you do have a random accident, you will not move at all for that turn but still use fuel.\n" +
+								"During each of your turns you will have three options. Each option has a diffrent result in your progress.\n" +
+								"Ahead cautious: You use two fuel, go your base distance, but have no chance for an accident.\n" +
+								"Ahead fast: You use two fuel, go three times your base distance, but have a higher chance of accident.\n" +
+								"Ahead standard: You use one fuel, go your base distance, and have an accident chance based off your crew members.\n" +
+								"Once you run out of fuel, your turn is over and the next player gets to play.\n" +
+								"Space phase ends when each player runs out of fuel. The player who makes it the furthest wins the game!");
 	}
 	
 	/**
@@ -262,7 +273,9 @@ public class PlayGame extends JFrame {
 	 * This method changes the the frame to run build phase
 	 */
 	private void switchToBuildPhase() {
-		
+		BuildPhase build = new BuildPhase(players);
+		introPanel.setVisible(false);
+		this.add(build);
 	}
 	
 	/**
