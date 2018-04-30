@@ -89,13 +89,49 @@ public class Hand {
 	}
 	
 	/**
+	 * addCommoditiy()
+	 * This method will add a commodity to the hand's scorecard. 0 adds crew member, 1 adds fuel
+	 * @param index
+	 */
+	public void addCommoditiy(int index) {
+		handScorecard.addCommodity(index);
+	}
+	
+	/**
+	 * getNumberCrewMembers()
+	 * This method returns the number of crew members the hand currently has
+	 * @return Number of crew members
+	 */
+	public int getNumberCrewMembers() {
+		return handScorecard.getNumberCrewMembers();
+	}
+	
+	/**
+	 * getMaxNumberCrewMembers()
+	 * This method returns the maximum amount of crew members the hand can hold.
+	 * @return Maximum number of crew members
+	 */
+	public int getMaxNumberCrewMembers() {
+		return handScorecard.getMaxNumberCrewMembers();
+	}
+	
+	/**
+	 * getNumberFuel()
+	 * This method returns how much fuel the hand currently has
+	 * @return Amount of fuel
+	 */
+	public int getNumberFuel() {
+		return handScorecard.getNumberFuel();
+	}
+	
+	/**
 	 * checkCrewFull
 	 * This method checks the hand's scorecard to make sure there are 3 or less crew members.
 	 * @param index
 	 * @return True if there are already 4 crew members, else returns false
 	 */
-	public boolean checkCrewFull(int index) {
-		return handScorecard.checkCrewFull(index);
+	public boolean checkCrewFull() {
+		return handScorecard.checkCrewFull();
 	}
 	
 	/**
@@ -132,7 +168,7 @@ public class Hand {
 	public int numberOfHullParts(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
-			if(playerResources[i] == Hull_Parts)
+			if(playerResources[i] == Resources.Hull_Parts)
 				num++;
 		}
 		return num;
@@ -141,7 +177,7 @@ public class Hand {
 	public int numberOfElectronics(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
-			if(playerResources[i] == Electronics)
+			if(playerResources[i] == Resources.Electronics)
 				num++;
 		}
 		return num;
@@ -150,7 +186,7 @@ public class Hand {
 	public int numberOfGlass(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
-			if(playerResources[i] == Glass)
+			if(playerResources[i] == Resources.Glass)
 				num++;
 		}
 		return num;
@@ -159,7 +195,7 @@ public class Hand {
 	public int numberOfCrewMembers(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
-			if(playerResources[i] == Crew_Member)
+			if(playerResources[i] == Resources.Crew_Member)
 				num++;
 		}
 		return num;
@@ -168,7 +204,7 @@ public class Hand {
 	public int numberOfFuel(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
-			if(playerResources[i] == Fuel)
+			if(playerResources[i] == Resources.Fuel)
 				num++;
 		}
 		return num;
