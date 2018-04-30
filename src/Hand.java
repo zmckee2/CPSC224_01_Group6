@@ -93,7 +93,7 @@ public class Hand {
 	 * This method will add a commodity to the hand's scorecard. 0 adds crew member, 1 adds fuel
 	 * @param index
 	 */
-	public void addCommoditiy(int index) {
+	public void addCommodity(int index) {
 		handScorecard.addCommodity(index);
 	}
 	
