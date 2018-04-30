@@ -94,13 +94,8 @@ public class Scorecard {
 	//Will add documentation, refer to readScores in hand
 	public int[] readScores() {
 		int[] scores = new int[3];
-<<<<<<< HEAD
 		scores[0] = commodities[0]; //Crew members
 		scores[1] = commodities[1]; //Fuel
-=======
-		scores[0] = commodities[1]; //Crew members
-		scores[1] = commodities[0]; //Fuel
->>>>>>> f964c3b6151f54e3ee650c3b9af452084eba5cec
 		int thrusterTier = 1;
 		if(partsBuilt[1])
 			thrusterTier++;
