@@ -28,38 +28,41 @@ public class SpacePhase {
     //      readScore()- returns array of integers representing ship parts
 
     // tiers of shipparts 1-3
-    // fuel reserves not going to affect distance
-    // increase fuel - cannot be changed from what player has created
-    // cockpit does not affect distance
-    // increase crew members - cannot be changed from what player has created
-    // *thrusters does affect distance
+    // increase fuel - static --> number turns
+    // increase crew members - static --> decreases chance of accident
+    // thrusters does affect distance --> base distance they move (Tier 1: move 1, Tier 2: move 2, Tier 3: move 3)
+
 
     // *fuel = how many turns in space phase
     // *crew = accident chance 1 crew = 20%, 2 crew = 15%
-    // accident --> no distance traveled
-    // random 0-100, check 0-20, 0-15, etc..
+    //  random 0-100, check 0-20, 0-15, etc..
+
+   // fuel = upper limit of for loop
+   // accident = pick a move
+
+   // fly space: tiers of thruster
+    // cautious: distance * 1   fuel -2    accident 0%
+    // normal:   distance * 1   fuel -1    accident 20% - crew members * 4
+    // fast:     distance * 3   fuel -2    accident (20% - crew members * 4) * 2
+
+    // make accident chance integer
 
 
     // flyspace() -- private
     //  cycle through each players
-    //  .checkRocketBuilt() --> true, false: distance = 0
-    //  .readScore() -> return [fuel, crewmembers, returns tier of thruster]
-    //  another while loop
+    //  if(players[0].checkRocketBuilt()) --> true, false: distance = 0
+    //  else --> you can't fly into space
+
+    //  .readScore() -> return [crewmembers, fuel, tier of thruster]
+
     //   while fuel != 0
     //   proceed cautious, normal, fast
-    //      cautious: no risk of accident, 2x fuel, distance = tier of thrusters
-    //      normal: risk of accident (dependent upon crew members), 1x fuel, distance = tier of thrusters
-    //      fast: 2x risk of accident, 2x fuel, distance = 3x tier of thrusters
     //   subtract fuel... until empty
-    //   .record final distance()
+    //   .recordfinaldistance()
     //   nextplayer.
     //
-    //
 
-    // check_fuel()
     // calculateAccident()
     // calculateDistance()
-
-
 
 }

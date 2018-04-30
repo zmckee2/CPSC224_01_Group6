@@ -19,8 +19,12 @@ public class Test {
         players[0].addCommodity(1);
         players[0].addCommodity(1);
         int[] temp = players[0].readScore();
+
         System.out.println(temp[2]);
         System.out.println(players[0].getNumberFuel());
+
+        SpacePhase space = new SpacePhase(players);
+
 
     }
 }
