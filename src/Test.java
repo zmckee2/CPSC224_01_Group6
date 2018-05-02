@@ -6,7 +6,7 @@ public class Test {
 
     public static void main(String[] args) {
 
-        Hand[] players = new Hand[2];
+        Hand[] players = new Hand[3];
         for(int i = 0; i < players.length; i++) {
             players[i] = new Hand();
         }
@@ -58,6 +58,30 @@ public class Test {
         players[1].buildPart(7);
         players[1].buildPart(8);
         players[1].buildPart(9);
+
+        // PLAYER 3
+        // crew
+        players[2].addCommodity(0);
+        players[2].addCommodity(0);
+
+        // fuel
+        players[2].addCommodity(1);
+        players[2].addCommodity(1);
+        players[2].addCommodity(1);
+        players[2].addCommodity(1);
+
+        // rocket tier
+        players[2].buildPart(0);
+        players[2].buildPart(1);
+
+        // complete rocket
+        players[2].buildPart(3);
+        players[2].buildPart(4);
+        players[2].buildPart(5);
+        players[2].buildPart(6);
+        players[2].buildPart(7);
+        players[2].buildPart(8);
+        players[2].buildPart(9);
 
         SpacePhase spaceship = new SpacePhase(players);
     }

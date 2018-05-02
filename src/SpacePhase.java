@@ -4,6 +4,7 @@
  *  normal:   distance * 1   fuel -1    accident 20% - crew members * 4
  *  fast:     distance * 3   fuel -2    accident (20% - crew members * 4) * 2
  */
+
 import java.util.Scanner;
 
 public class SpacePhase {
@@ -30,7 +31,6 @@ public class SpacePhase {
     public SpacePhase(Hand[] players) {
 
         for (int i = 0; i < players.length; i++) {
-
             System.out.println("\nPLAYER " + (i+1) +"\n");
             if(players[i].checkRocketBuilt()) {
                 tempScore = players[i].readScore();
@@ -61,6 +61,7 @@ public class SpacePhase {
      * @return: n/a
      */
     private SpeedTier setPlayerSpeed(){
+        SpeedTier speedTier;
         do{
             Scanner keyboard = new Scanner(System.in);
             System.out.println(" --- Spaceship Speeds --- ");
@@ -70,20 +71,11 @@ public class SpacePhase {
                 option++;
             }
             System.out.println("Please select a number corresponding to a speed setting: ");
-            try {
-                speedOption = keyboard.nextInt();
-                SpeedTier speedTier = SpeedTier.values()[speedOption - 1];
-                System.out.println("selected speed: " + speedTier);
-                return speedTier;
-            }
-            catch (Exception e) {
-                System.out.println("Please select a valid speed: ");
-                speedOption = keyboard.nextInt();
-                SpeedTier speedTier = SpeedTier.values()[speedOption - 1];
-                System.out.println("selected speed: " + speedTier);
-                return speedTier;
-            }
+            speedOption = keyboard.nextInt();
+            speedTier = SpeedTier.values()[speedOption - 1];
+            System.out.println("selected speed: " + speedTier);
         } while (speedOption == 0);
+        return speedTier;
     }
 
     /**
@@ -142,7 +134,7 @@ public class SpacePhase {
                 accident = true;
             }
         }
-        else { return false; }
+        else { accident = false; }
         return accident;
     }
 
