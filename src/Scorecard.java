@@ -44,8 +44,10 @@ public class Scorecard {
 		else if (partsBuilt[6])
 			currentMax = 2;
 		else					//If no parts of the cockpit have been built,
-			return true;		//return true to insure no crew can be added.
-		return (currentCrew <= currentMax);
+			currentMax = 0;		//return true to insure no crew can be added.
+		System.out.println("Cur max: " + currentMax + partsBuilt[8] + " " + partsBuilt[7] + " " + partsBuilt[6]);
+		System.out.println(currentCrew <= currentMax);
+		return (currentCrew == currentMax);
 	}
 	
 	/**

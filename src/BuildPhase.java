@@ -1,20 +1,21 @@
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.*;
-import java.awt.color.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 
 
 
-public class BuildPhase extends JPanel{
+public class BuildPhase extends PicturePanel{
 	
 	// fields for array of Hands, current Hand during turn, and number of players
 	Hand[] players;
@@ -33,12 +34,13 @@ public class BuildPhase extends JPanel{
 			addCrewMem,addFuel,die1,die2,die3,die4,die5,reroll,proceed,noMove;
 	
 	//init all labels
-	JLabel numCrewMem,maxCrewMem,numFuel,roundNumL,rollNumL,activePlayerNumL,wFBBPlabel,wFDBPlabel;
+	JLabel numCrewMem,maxCrewMem,numFuel,roundNumL,rollNumL,activePlayerNumL;
 	
 	JTextArea ckptTips,thrstTips,fresTips,crewMemTips,fuelTips;
 	
 	JTextArea debugConsole = new JTextArea();
-	JScrollPane scrollPane = new JScrollPane(debugConsole, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	//JScrollPane scrollPane = new JScrollPane(debugConsole, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	PlayGame activeWindow;
 	
 	// dimension for Dice
 	Dimension dieDim = new Dimension(50,50);
@@ -56,7 +58,9 @@ public class BuildPhase extends JPanel{
 	 * This is the constructor for BuildPhase
 	 * @param array of Hands representing different players
 	 */
-	public BuildPhase(Hand[] initPlayers){
+	public BuildPhase(Hand[] initPlayers/*, /*PlayGame activeWindow*/){
+		super("build.jpg");
+		//this.activeWindow = activeWindow;
 		// init players and number of players
 		players = initPlayers;
 		numPlayers = players.length;
@@ -67,7 +71,8 @@ public class BuildPhase extends JPanel{
 		scrb.setLayout(new GridBagLayout());
 		JPanel dicePanel = new JPanel();
 		dicePanel.setLayout(new GridBagLayout());
-		
+		scrb.setOpaque(false);
+		dicePanel.setOpaque(false);
 		// init GridBagConstraints object to control location of buttons & labels
 		GridBagConstraints gCon = new GridBagConstraints();
 		gCon.gridx = 1;
@@ -86,9 +91,11 @@ public class BuildPhase extends JPanel{
 		addCrewMem = new JButton("Add Crew Member");
 		numFuel = new JLabel("Units of Fuel: 0");
 		addFuel = new JButton("Add Fuel");
+		numCrewMem.setForeground(Color.white);
+		maxCrewMem.setForeground(Color.WHITE);
+		numFuel.setForeground(Color.white);
 		
 		debugConsole.setEditable(false);
-		
 		debugConsole.setPreferredSize(debugConsole.getPreferredSize());
 		debugConsole.setLineWrap(true);
 		debugConsole.setWrapStyleWord(true);
@@ -126,11 +133,26 @@ public class BuildPhase extends JPanel{
 		crewMemTips = new JTextArea();
 		fuelTips = new JTextArea();
 		
-		ckptTips.setText("Required to build a Cockpit: GLAS, ELEC, CREW, HULL");
-		thrstTips.setText("Required to build a Thruster: FUEL, ELEC, HULL, HULL");
-		fresTips.setText("Required to build a Fuel Reserves: FUEL, FUEL, ELEC, HULL");
-		crewMemTips.setText("Required to add a Crew Member: At least 3 CREW");
-		fuelTips.setText("Required to add Fuel: At least 3 FUEL, and Fuel Reserves Mk1 must be built");
+		ckptTips.setText("Cost to build a Cockpit:                GLAS, ELEC, CREW, HULL");
+		thrstTips.setText("Cost to build a Thruster:               FUEL, ELEC, HULL, HULL");
+		fresTips.setText("Cost to build Fuel Reserves:         FUEL, FUEL, ELEC, HULL");
+		crewMemTips.setText("Cost to add a Crew Member:       At least 3 CREW, and Cockpit  Mk1 must be built");
+		fuelTips.setText("Cost to add Fuel:                           At least 3 FUEL, and Fuel             Reserves Mk1 must be built");
+		ckptTips.setOpaque(false);
+		thrstTips.setOpaque(false);
+		fresTips.setOpaque(false);
+		crewMemTips.setOpaque(false);
+		fuelTips.setOpaque(false);
+		ckptTips.setForeground(Color.white);
+		thrstTips.setForeground(Color.white);
+		fresTips.setForeground(Color.white);
+		crewMemTips.setForeground(Color.white);
+		fuelTips.setForeground(Color.white);
+		ckptTips.setWrapStyleWord(true);
+		fuelTips.setWrapStyleWord(true);
+		thrstTips.setWrapStyleWord(true);
+		fresTips.setWrapStyleWord(true);
+		crewMemTips.setWrapStyleWord(true);
 		
 		ckptTips.setEditable(false);
 		thrstTips.setEditable(false);
@@ -253,7 +275,9 @@ public class BuildPhase extends JPanel{
 		gCon.gridx = 4;
 		dicePanel.add(rollNumL, gCon);
 		gCon.gridx = 5;
-		dicePanel.add(new JPanel(), gCon);
+		JPanel fill = new JPanel();
+		fill.setOpaque(false);
+		dicePanel.add(fill, gCon);
 		
 		//proceed.setVisible(false);// set PROCEED button to be hidden
 		die1.setVisible(true);
@@ -261,101 +285,33 @@ public class BuildPhase extends JPanel{
 		dicePanel.setVisible(true);
 		this.add(scrb, BorderLayout.NORTH);
 		this.add(dicePanel, BorderLayout.CENTER);
-		this.setVisible(true);
-	}
-	
-	/**
-	 * playBuild()
-	 * This method runs through 10 turns for all players, during which
-	 * players will build their space ship.
-	 */
-	public void playBuild(){ // this is basically the main method of BuildPhase
-		for(int i = 0; i < 10; i++){//loop for 10 turns
-			roundNum = (i+1);
-			roundNumL.setText("Round: " + roundNum);
-			appendTextToDebugConsole("Round " + roundNum + " has begun.");
-			playRound();
-		}
-	}
-	
-	public void playRound() {
-		for(int j = 0; j < players.length; j++){
-			curHand = players[j];
-			activePlayerNum = (j+1);
-			activePlayerNumL.setText("Player: " + activePlayerNum);
-			appendTextToDebugConsole("Player  " + activePlayerNum + ", it is your turn.");
-			playHand();
-			System.out.println("Proceeding...");
-		}
-	}
-	
-	
-	
-	public void playHand() {
-		boolean continueRolling = true;
-		waitingForDiceButtonPress = false;
+		activePlayerNum = 0;
+		curHand = players[0];
+		activePlayerNumL.setText("Player: " + (activePlayerNum + 1));
+		roundNumL.setText("Round 1");
+		rollNumL.setText("Roll: 1");
+		for(int i = 0; i < 5; i++)
+			rerollDice[i] = false;
 		refreshBuildOptions(curHand);
-		//roll all 5 dice
-		appendTextToDebugConsole("Rolling resources...");
-		rollResources(curHand, true, true, true, true, true);
-		for(int k = 0; k < 3 && continueRolling; k++){// roll 3 times
-			rollNumL.setText("Roll: " + (k+1));
-			
-			//set all dice keep-booleans on false
-			for(int din = 0; din < 5; din++) {
-				rerollDice[din] = false;
-			}
-			
-			//display results on Dice buttons
-			updateDiceText();
-			
-			waitingForDiceButtonPress = true;
-			//now, player can choose which dice they want to keep
-			appendTextToDebugConsole("Waiting for player to select dice and reroll");
-			while(waitingForDiceButtonPress) {
-				// wait for player to click Reroll
-				System.out.print("");
-			}
-			appendTextToDebugConsole("Player has clicked reroll");
-			updateDiceText();
-			System.out.print("updeated dice text?");
-			waitingForDiceButtonPress = false;
-			continueRolling = !rerollDice[0] || !rerollDice[1] || !rerollDice[2] || !rerollDice[3] || !rerollDice[4];
-			
-		}
-		// show player what the options are for scoring
-		updateBuildOptions(curHand);
-		
-		waitingForDiceButtonPress = false;
-		waitingForBuildButtonPress = true;
-		
-		while(waitingForBuildButtonPress) {
-			// wait for them to select a button
-			System.out.print("");
-		}
-		proceed.setBackground(grn_btn);
-		waitingForProceedButtonPress = true;
-		while(waitingForProceedButtonPress) {
-			// wait for them to select a button
-			System.out.print("j");
-		}
-		proceed.setBackground(null);
+		rollResources(curHand,rerollDice);
+		updateDiceText();
+		debugConsole.setWrapStyleWord(true);
+		debugConsole.setText("Please select dice to keep, click REROLL when finsihed");
+		this.setVisible(true);
 	}
 	
 	public void updateDiceText() {
 		JButton[] playerDice = {die1, die2, die3, die4, die5};
-		System.out.println("playerDice array: " + playerDice.toString());
 		for(int dieInd = 0; dieInd < 5; dieInd++) {
-			System.out.println("dieInd = " + dieInd + ", resource = " + curHand.playerResources[dieInd]);
-			if(curHand.playerResources[dieInd] == Hand.Resources.Electronics) {
+			if(curHand.getResourceAt(dieInd) == Hand.Resources.Electronics) {
 				playerDice[dieInd].setText("ELEC");
-			} else if(curHand.playerResources[dieInd] == Hand.Resources.Fuel) {
+			} else if(curHand.getResourceAt(dieInd) == Hand.Resources.Fuel) {
 				playerDice[dieInd].setText("FUEL");
-			} else if(curHand.playerResources[dieInd] == Hand.Resources.Glass) {
+			} else if(curHand.getResourceAt(dieInd) == Hand.Resources.Glass) {
 				playerDice[dieInd].setText("GLAS");
-			} else if(curHand.playerResources[dieInd] == Hand.Resources.Hull_Parts) {
+			} else if(curHand.getResourceAt(dieInd) == Hand.Resources.Hull_Parts) {
 				playerDice[dieInd].setText("HULL");
-			} else if(curHand.playerResources[dieInd] == Hand.Resources.Crew_Member) {
+			} else if(curHand.getResourceAt(dieInd) == Hand.Resources.Crew_Member) {
 				playerDice[dieInd].setText("CREW");
 			} else {
 				playerDice[dieInd].setText("N//A");
@@ -370,17 +326,10 @@ public class BuildPhase extends JPanel{
 	 * are true and which are false (false = no reroll, true = reroll resource)
 	 * @param Hand h, booleans a-e
 	 */
-	private void rollResources(Hand h, boolean a, boolean b, boolean c, boolean d, boolean e){ // 
-		if(a)
-			h.playerResources[0] = Hand.Resources.randomResource();
-		if(b)
-			h.playerResources[1] = Hand.Resources.randomResource();
-		if(c)
-			h.playerResources[2] = Hand.Resources.randomResource();
-		if(d)
-			h.playerResources[3] = Hand.Resources.randomResource();
-		if(e)
-			h.playerResources[4] = Hand.Resources.randomResource();
+	private void rollResources(Hand h, boolean[] a){ // 
+		for(int i = 0; i < 5; i++) 
+			if(!a[i]) 
+				h.reroll(i);	
 	}
 	
 	private void refreshBuildOptions(Hand h) {
@@ -436,6 +385,10 @@ public class BuildPhase extends JPanel{
 		numCrewMem.setText("Number of Crew Members: " + curHand.getNumberCrewMembers());
 		maxCrewMem.setText("Max Number of Crew Members: " + curHand.getMaxNumberCrewMembers());
 		numFuel.setText("Units of Fuel: " + curHand.getNumberFuel());
+		noMove.setEnabled(false);
+		noMove.setBackground(null);
+		proceed.setEnabled(false);
+		proceed.setBackground(null);
 	}
 
 	/**
@@ -575,7 +528,8 @@ public class BuildPhase extends JPanel{
 			addFuel.setBackground(red_btn);
 			addFuel.setEnabled(false);
 		}
-		
+		noMove.setEnabled(true);
+		noMove.setBackground(grn_btn);
 		//update number of commodities & max fuel labels
 		// h.handScorecard.commodities[0] is Crew Members
 		// h.handScorecard.commodities[1] is Fuel
@@ -586,6 +540,24 @@ public class BuildPhase extends JPanel{
 		
 	}
 	
+	private void ontoNext() {
+		if(activePlayerNum == (players.length - 1)) {
+			curHand = players[0];
+			activePlayerNum = 0;
+		} else {
+			curHand = players[activePlayerNum + 1];
+			activePlayerNum++;
+		}
+		refreshBuildOptions(curHand);
+		for(int i = 0; i < 5; i++) 
+			rerollDice[i] = false;
+		rollResources(curHand,rerollDice);
+		updateDiceText();
+		activePlayerNumL.setText("Player : " + (activePlayerNum + 1));
+		rollNumL.setText("Roll: 1");
+		rollNum = 0;
+		debugConsole.setText("Please select dice to keep, click REROLL when finsihed");
+	}
 	/**
 	 * ListenForButton class provides specific new implementation of ActionListener interface
 	 */
@@ -596,87 +568,110 @@ public class BuildPhase extends JPanel{
 		 * @param event
 		 */
 		public void actionPerformed(ActionEvent e) {
-			if(waitingForBuildButtonPress) {
 				if(e.getSource() == ckpt1) {
 					if(canBuildCockpit(curHand) && !curHand.checkPartBuilt(6)){
 						buildCockpit(curHand);
 						ckpt1.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Cockpit MKI, please click proceed");
 					}
 				}
 				if(e.getSource() == ckpt2) {
 					if(canBuildCockpit(curHand) && !curHand.checkPartBuilt(7)){
 						buildCockpit(curHand);
 						ckpt2.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Cockpit MKII, please click proceed");
 					}
 				}
 				if(e.getSource() == ckpt3) {
 					if(canBuildCockpit(curHand) && !curHand.checkPartBuilt(8)){
 						buildCockpit(curHand);
 						ckpt3.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Cockpit MKIII, please click proceed");
 					}
 				}
 				if(e.getSource() == thrst1) {
 					if(canBuildThruster(curHand) && !curHand.checkPartBuilt(0)){
 						buildThruster(curHand);
 						thrst1.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Thrusters MKI, please click proceed");
 					}
 				}
 				if(e.getSource() == thrst2) {
 					if(canBuildThruster(curHand) && !curHand.checkPartBuilt(1)){
 						buildThruster(curHand);
 						thrst2.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Thrusters MKII, please click proceed");
 					}
 				}
 				if(e.getSource() == thrst3) {
 					if(canBuildThruster(curHand) && !curHand.checkPartBuilt(2)){
 						buildThruster(curHand);
 						thrst3.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Thrusters MKIII, please click proceed");
 					}
 				}
 				if(e.getSource() == fres1) {
 					if(canBuildFuelReserves(curHand) && !curHand.checkPartBuilt(3)){
 						buildFuelReserves(curHand);
 						fres1.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Fuel Reserves MKI, please click proceed");
 					}
 				}
 				if(e.getSource() == fres2) {
 					if(canBuildFuelReserves(curHand) && !curHand.checkPartBuilt(4)){
 						buildFuelReserves(curHand);
 						fres2.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Fuel Reserves MKII, please click proceed");
 					}
 				}
 				if(e.getSource() == fres3) {
 					if(canBuildFuelReserves(curHand) && !curHand.checkPartBuilt(5)){
 						buildFuelReserves(curHand);
 						fres3.setBackground(blu_btn);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Build Fuel Reserves MKIII, please click proceed");
 					}
 				}
 				if(e.getSource() == addCrewMem) {
-					if(canAddCrewMembers(curHand) && !curHand.checkCrewFull()){
+					if(canAddCrewMembers(curHand)){
 						curHand.addCommodity(0);
-						waitingForBuildButtonPress = false;
+						addCrewMem.setBackground(blu_btn);
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Added a crew member, please click proceed");
 					}
 				}
 				if(e.getSource() == addFuel) {
 					if(canAddFuel(curHand)){
 						addFuel(curHand);
-						waitingForBuildButtonPress = false;
+						proceed.setEnabled(true);
+						proceed.setBackground(grn_btn);
+						debugConsole.setText("Added fuel, please click proceed");
 					}
 				}
 				if(e.getSource() == noMove) {
-					System.out.println("noMove button pressed");
-					waitingForBuildButtonPress = false;
+					debugConsole.setText("Nothing built, please click proceed");
+					noMove.setBackground(blu_btn);
+					proceed.setEnabled(true);
+					proceed.setBackground(grn_btn);
 				}
-			} if(waitingForDiceButtonPress) {
 				if(e.getSource() == die1) {
 					if(die1.getBackground() == grn_btn) {
 						die1.setBackground(null);
@@ -723,15 +718,36 @@ public class BuildPhase extends JPanel{
 					}
 				}
 				if(e.getSource() == reroll) {
-					rollResources(curHand, !rerollDice[0], !rerollDice[1], !rerollDice[2], !rerollDice[3], !rerollDice[4]);
-					waitingForDiceButtonPress = false;
+					if((rerollDice[0] && rerollDice[1] && rerollDice[2] && rerollDice[3] && rerollDice[4]) || rollNum == 3) {
+						updateBuildOptions(curHand);
+					}
+					else if (rollNum < 2) {
+						rollResources(curHand, rerollDice);
+						rollNum++;
+						rollNumL.setText("Roll: " + (rollNum + 1));
+						updateDiceText();
+					} else {
+						rollResources(curHand, rerollDice);
+						updateDiceText();
+						updateBuildOptions(curHand);
+					}
+					for(int din = 0; din < 5; din++) {
+						rerollDice[din] = false;
+					}
+							
+					
 				}
-			} if (waitingForProceedButtonPress) {
-				if(e.getSource() == proceed) {
-					waitingForProceedButtonPress = false;
+			if(e.getSource() == proceed) {
+				if(roundNum < 10) {
+					if(activePlayerNum == (players.length - 1)) {
+						roundNum++;
+						roundNumL.setText("Round: " + (roundNum + 1));
+					}
+					ontoNext();
+				} else {
+					switchToSpace();
 				}
 			}
-			
 			
 		}
 	}
@@ -752,10 +768,6 @@ public class BuildPhase extends JPanel{
 				h.buildPart(2);
 			}
 		}
-	}
-	
-	private void appendTextToDebugConsole(String newMessage) {
-		debugConsole.setText(debugConsole.getText() + "\n" + newMessage);
 	}
 	
 	/**
@@ -796,18 +808,6 @@ public class BuildPhase extends JPanel{
 		}
 	}
 	
-	/**
-	 * addCrewMember(Hand h)
-	 * Adds another Crew Member to the Scoreboard
-	 * @param Hand h
-	 */
-	private void addCrewMember(Hand h){
-		if(canAddCrewMembers(h)){
-			if(!h.checkCrewFull()){
-				h.addCommodity(0);
-			}
-		}
-	}
 	
 	private void addFuel(Hand h){
 		int amountOfFuel = calcFuelQuantity(h);
@@ -880,7 +880,7 @@ public class BuildPhase extends JPanel{
 	 * @return true/false
 	 */
 	private boolean canAddCrewMembers(Hand h){
-		return (h.numberOfCrewMembers() >= 3);
+		return ((h.numberOfCrewMembers() >= 3) && !h.checkCrewFull());
 	}
 	
 	/**
@@ -903,6 +903,10 @@ public class BuildPhase extends JPanel{
 			return 3;
 		else
 			return 0;
+	}
+	
+	private void switchToSpace() {
+		activeWindow.switchPhases();
 	}
 	
 }

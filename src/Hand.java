@@ -4,7 +4,7 @@ public class Hand {
 	public enum Resources {Fuel, Hull_Parts, Crew_Member, Electronics, Glass;
 						   private static Random ran = new Random();
 						   public static Resources randomResource() { //This method is used to get random resources
-							   return Resources.values()[ran.nextInt(5)];};
+							   return Resources.values()[ran.nextInt(100)%5];};
 						   }
 	Resources[] playerResources;
 	Scorecard handScorecard;

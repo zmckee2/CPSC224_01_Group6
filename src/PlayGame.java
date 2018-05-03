@@ -10,12 +10,15 @@
 import javax.swing.*;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.awt.GridLayout;
 
 public class PlayGame extends JFrame {
@@ -25,9 +28,13 @@ public class PlayGame extends JFrame {
 	private JLabel title;
 	private JTextArea instructionText;
 	private PicturePanel introPanel, instructionPanel;
-	private JPanel buttonPanel;
+	private JPanel buttonPanel, massContainer;
+	private CardLayout navi;
 	private JSlider numOfPlayers;
 	private Hand[] players;
+	private BuildPhase build;
+	private SpacePhase space;
+	private JFrame buildFrame;
 	
 	public static void main(String[] args) {
 		new PlayGame();
@@ -51,8 +58,11 @@ public class PlayGame extends JFrame {
 		int xPos = (int) ((screenSize.getWidth() / 2) - (windowSize.getWidth() / 2));
 		int yPos = (int) ((screenSize.getHeight() / 2) - (windowSize.getHeight() / 2));
 		this.setLocation(xPos, yPos);
+		massContainer = new JPanel();
+		navi = new CardLayout();
+		massContainer.setLayout(navi);
 		createIntroPane();
-		
+		this.add(massContainer);
 		this.setVisible(true);
 	}
 	
@@ -102,7 +112,10 @@ public class PlayGame extends JFrame {
 			buttonPanel.add(new JLabel());
 		
 		introPanel.add(buttonPanel);
-		this.add(introPanel);
+		//navi.addLayoutComponent(introPanel, "intro");
+		
+		massContainer.add(introPanel, "intro");
+		navi.show(massContainer, "intro");
 	}
 	
 	/**
@@ -144,8 +157,9 @@ public class PlayGame extends JFrame {
 		bottomButtons.add(goToBuildInst);
 		bottomButtons.add(goToSpaceInst);
 		instructionPanel.add(bottomButtons, BorderLayout.SOUTH);
-		this.add(instructionPanel);
+		massContainer.add(instructionPanel, "instructions");
 		//Setting the buttons that shouldn't be visable in the first instructions screen to invisible
+		navi.show(massContainer, "instructions");
 		introPanel.setVisible(false);
 		backToIntroInst.setVisible(false);
 		backToBuildInst.setVisible(false);
@@ -158,8 +172,7 @@ public class PlayGame extends JFrame {
 	 * This method switches the instructions screen back to the welcom screen
 	 */
 	private void backToIntroPane() {
-		instructionPanel.setVisible(false);
-		introPanel.setVisible(true);
+		navi.show(massContainer, "intro");
 	}
 	
 	
@@ -261,21 +274,40 @@ public class PlayGame extends JFrame {
 	}
 	
 	/**
-	 * switchToSpacePhase()
-	 * This method changes the frame to run space phase
-	 */
-	public void switchToSpacePhase() {
-		
-	}
-	
-	/**
 	 * switchToBuildPhase()
 	 * This method changes the the frame to run build phase
 	 */
 	private void switchToBuildPhase() {
-		BuildPhase build = new BuildPhase(players);
-		introPanel.setVisible(false);
-		this.add(build);
+		Hand[] work = {new Hand(), new Hand()};
+		build = new BuildPhase(players);
+		massContainer.add(build, "BuildPhase");
+		navi.show(massContainer, "BuildPhase");
+	}
+	
+	public void switchPhases() {
+		build.setVisible(false);
+		this.setVisible(true);
+		space = new SpacePhase(players);
+		this.add(space,this);
+	}
+	
+	public void endGame() {
+		space.setVisible(false);
+		int[] distances = new int[players.length];
+		for(int i = 0; i < players.length; i++) {
+			distances[i] = players[i].getFinalDistance();
+		}
+		PicturePanel finishPanel = new PicturePanel("victory.jpg");
+		JTextArea finalReport = new JTextArea();
+		finalReport.setOpaque(false);
+		finalReport.setEditable(false);
+		finalReport.setFont(new Font("Helvetica", Font.PLAIN, 18));
+		finalReport.setText("Final Disances:\n");
+		for(int i = 0; i < players.length; i--) {
+			finalReport.append("Player " + (i+1) + ": Distance of " + distances[i]);
+		}
+		finishPanel.add(finalReport);
+		
 	}
 	
 	/**
