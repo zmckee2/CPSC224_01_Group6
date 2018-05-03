@@ -5,21 +5,31 @@
  *  fast:     distance * 3   fuel -2    accident (20% - crew members * 4) * 2
  */
 
-import java.util.Scanner;
-
-public class SpacePhase {
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+public class SpacePhase extends PicturePanel{
     private int totalDistance;
     private int totalCrew;
     private int totalFuel;
     private int rocketTier;
     private int[] tempScore;
+    private int currentPlayer;
+    private int currentDistance;
 
-    public enum SpeedTier {CAUTIOUS, NORMAL, FAST}
-
+    private SpeedTier curSpeed;
+    
+    private JButton cautious, normal, fast, proceed, launch;
+    private JLabel fuelLeft, distance, curAccident, currSpeed;
+    private Hand curHand;
+    private JTextArea output;
+    private Hand[] players;
+    private PlayGame activeWindow;
     private double accidentChance;
-    private boolean accident;
 
-    private int speedOption;
+    public enum SpeedTier {CAUTIOUS, NORMAL, FAST};
+    
 
     /**
      * SpacePhase constructor
@@ -28,54 +38,77 @@ public class SpacePhase {
      * corresponding to each player
      * @return: n/a
      */
-    public SpacePhase(Hand[] players) {
-
-        for (int i = 0; i < players.length; i++) {
-            System.out.println("\nPLAYER " + (i+1) +"\n");
-            if(players[i].checkRocketBuilt()) {
-                tempScore = players[i].readScore();
-                totalCrew = tempScore[0];
-                totalFuel = tempScore[1];
-                rocketTier = tempScore[2];
-                totalDistance = 0;
-                speedOption = 0;
-
-                System.out.println("--- Player " + (i+1) + "'s  Rocket ---" );
-                System.out.println("total crew: " + totalCrew);
-                System.out.println("total fuel: " + totalFuel);
-                System.out.println("rocket tier: " + rocketTier);
-                System.out.println("total distance: " + totalDistance);
-
-                spaceTravel();
-            }
-            else {
-                System.out.println("ERROR: ROCKET NOT COMPLETE");
-            }
-        }
+    public SpacePhase(Hand[] players, PlayGame activeWindow){
+    	super("space.jpg");
+    	this.players = players;
+    	this.activeWindow = activeWindow;
+    	cautious = new JButton("Cautious");
+    	normal = new JButton("Normal");
+    	fast = new JButton("Fast");
+    	launch = new JButton("Launch with current speed");
+    	proceed = new JButton("Proceed");
+    	cautious.addActionListener(new buttonListener());
+    	normal.addActionListener(new buttonListener());
+    	fast.addActionListener(new buttonListener());
+    	proceed.addActionListener(new buttonListener());
+    	launch.addActionListener(new buttonListener());
+    	distance = new JLabel();
+    	fuelLeft = new JLabel();
+    	curAccident = new JLabel();
+    	currSpeed = new JLabel();
+    	output = new JTextArea();
+      	output.setEditable(false);
+    	
+    	this.add(cautious);
+    	this.add(normal);
+    	this.add(fast);
+    	this.add(proceed);
+    	this.add(fuelLeft);
+    	this.add(distance);
+    	this.add(output);
+    	this.add(launch);
+    	this.add(currSpeed);
+    	this.add(curAccident);
+    	currentPlayer = -1;
+    	advancePlayer();
     }
 
-    /**
-     * setPlayerSpeed() method
-     * sets the player speed based upon user input: CAUTIOUS, NORMAL, or FAST
-     * @param: n/a
-     * @return: n/a
-     */
-    private SpeedTier setPlayerSpeed(){
-        SpeedTier speedTier;
-        do{
-            Scanner keyboard = new Scanner(System.in);
-            System.out.println(" --- Spaceship Speeds --- ");
-            int option = 1;
-            for (SpeedTier speed: SpeedTier.values()){
-                System.out.println(option + " ~ " + speed.name());
-                option++;
-            }
-            System.out.println("Please select a number corresponding to a speed setting: ");
-            speedOption = keyboard.nextInt();
-            speedTier = SpeedTier.values()[speedOption - 1];
-            System.out.println("selected speed: " + speedTier);
-        } while (speedOption == 0);
-        return speedTier;
+    
+    private void advancePlayer() {
+    	if(currentPlayer < players.length - 1) {
+    		currentPlayer++;
+    		curHand = players[currentPlayer];
+    		tempScore = curHand.readScore();
+    		accidentChance = 20 - (tempScore[0] * 4);
+    		rocketTier = tempScore[2];
+    		distance.setText("Current Distance: " + currentDistance);
+    		fuelLeft.setText("Current fuel: " + tempScore[1]);
+    		curAccident.setText("Accident Change at current speed: " + accidentChance);
+    		curSpeed = SpeedTier.NORMAL;
+    		totalFuel = tempScore[1];
+    		
+    		currSpeed.setText("Current Speed: " + curSpeed);
+    		if(curHand.checkRocketBuilt()) {
+    			output.setText("Welcome Player " + (currentPlayer + 1) + ", please select a speed");
+    			fast.setEnabled(true);
+    			cautious.setEnabled(true);
+    			normal.setEnabled(true);
+    			proceed.setEnabled(false);
+    			proceed.setBackground(null);
+    			launch.setEnabled(true);
+    		}
+    		else {
+    			output.setText("Too bad Player " + (currentPlayer + 1) + ", you didn't complete your rocket. Please click proceed.");
+    			proceed.setEnabled(true);
+    			proceed.setBackground(Color.green);
+    			normal.setEnabled(false);
+    			cautious.setEnabled(false);
+    			fast.setEnabled(false);
+    			launch.setEnabled(false);
+    		}
+    	} else {
+    		activeWindow.endGame();
+    	}
     }
 
     /**
@@ -85,22 +118,17 @@ public class SpacePhase {
      * @return: n/a
      */
     private int calculateFuel(SpeedTier speed){
+    	int fuelLoss = 0;
         if (speed == SpeedTier.CAUTIOUS){
-            totalFuel = totalFuel - 2;
-            System.out.println("remaining fuel: " + totalFuel);
+            fuelLoss = 2;
         }
         else if (speed == SpeedTier.NORMAL){
-            totalFuel = totalFuel - 1;
-            System.out.println("remaining fuel: " + totalFuel);
+            fuelLoss = 1;
         }
         else if (speed == SpeedTier.FAST){
-            totalFuel = totalFuel - 2;
-            System.out.println("remaining fuel: " + totalFuel);
+            fuelLoss = 2;
         }
-        else {
-            totalFuel = 0;
-        }
-        return totalFuel;
+        return fuelLoss;
     }
 
     /**
@@ -111,31 +139,21 @@ public class SpacePhase {
      */
     private boolean calculateAccident(SpeedTier speed) {
         if (speed == SpeedTier.CAUTIOUS) {
-            accidentChance = 0.0;
-            System.out.println("accident chance: " + accidentChance + " %");
             if(Math.random() * 100 < accidentChance){
-                System.out.println("GAME OVER: CRASH!");
-                accident = true;
+                return true;
             }
         }
         else if (speed == SpeedTier.NORMAL) {
-            accidentChance = (20 - (totalCrew * 4));
-            System.out.println("accident chance: " + accidentChance + " %");
             if(Math.random() * 100 < accidentChance){
-                System.out.println("GAME OVER: CRASH!");
-                accident = true;
+                return true;
             }
         }
         else if (speed == SpeedTier.FAST){
-            accidentChance = ((20 - (totalCrew * 4)) * 2);
-            System.out.println("accident chance: " + accidentChance + " %");
-            if(Math.random() * 100 < accidentChance){
-                System.out.println("GAME OVER: CRASH!");
-                accident = true;
+            if(Math.random() * 100 < (accidentChance*2)){
+                return true;
             }
         }
-        else { accident = false; }
-        return accident;
+        return false;
     }
 
     /**
@@ -145,55 +163,77 @@ public class SpacePhase {
      * @return: n/a
      */
     private int calculateTotalDistance(SpeedTier speed) {
+    	int dhere = 0;
         if (speed == SpeedTier.CAUTIOUS){
-            totalDistance = totalDistance + rocketTier * 1;
-            System.out.println("total distance: " + totalDistance);
+            dhere = rocketTier * 1;
         }
         else if (speed == SpeedTier.NORMAL){
-            totalDistance = totalDistance + rocketTier * 1;
-            System.out.println("total distance: " + totalDistance);
+            dhere = rocketTier * 1;
         }
         else if (speed == SpeedTier.FAST){
-            totalDistance = totalDistance + rocketTier * 3;
-            System.out.println("total distance: " + totalDistance);
+            dhere = rocketTier * 3;
         }
-        else {
-            totalDistance = 0;
-        }
-        return totalDistance;
+        return dhere;
     }
+    
+    private void flyTurn() {
+    	int distanceNow = calculateTotalDistance(curSpeed);
+    	boolean accidentNow = calculateAccident(curSpeed);
+    	int fuelLost = calculateFuel(curSpeed);
+    	if(accidentNow) {
+    		output.setText("You had an accident! You gain no distance but still burn fuel.");
+    	} else {
+    		output.setText("Success! You go " + distanceNow + "km");
+    		totalDistance += distanceNow;
+    	}
+    	totalFuel -= fuelLost;
+    	fuelLeft.setText("Fuel remaining: " + totalFuel);
+    	distance.setText("Current Distance: " + totalDistance);
+    	if(totalFuel == 0) {
+    		proceed.setEnabled(true);
+    		proceed.setBackground(Color.GREEN);
+    		output.setText("Player " + (currentPlayer + 1) + " went " + totalDistance + ", please click proceed to let the next player play.");
+    		fast.setEnabled(false);
+    		cautious.setEnabled(false);
+    		normal.setEnabled(false);
+    		launch.setEnabled(false);
+    		curHand.recordFinalDistance(totalDistance);
+    	}
+    	if(totalFuel == 1) {
+    		fast.setEnabled(false);
+    		cautious.setEnabled(false);
+    		curSpeed = SpeedTier.NORMAL;
+    		currSpeed.setText("Current Speed: " + curSpeed);
+			curAccident.setText("Accident Change at current speed: " + accidentChance + "%");
+    	}
+    }
+    
+    private class buttonListener implements ActionListener {
 
-    /**
-     * spaceTravel() method
-     * calls calculateFuel(), calculateAccident(), and calculateTotalDistance for each player
-     * spaceTravel() is the driver function for SpacePhase
-     * @param: n/a
-     * @return: n/a
-     */
-    private int spaceTravel(){
-        int finalDistance = 0;
-        int remainingFuel;
-        boolean crashAccident;
-
-        do {
-            SpeedTier speed = setPlayerSpeed();
-            if (speed == SpeedTier.CAUTIOUS) {
-                remainingFuel = calculateFuel(SpeedTier.CAUTIOUS);
-                crashAccident = calculateAccident(SpeedTier.CAUTIOUS);
-                finalDistance = calculateTotalDistance(SpeedTier.CAUTIOUS);
-            } else if (speed == SpeedTier.NORMAL) {
-                remainingFuel = calculateFuel(SpeedTier.NORMAL);
-                crashAccident = calculateAccident(SpeedTier.NORMAL);
-                finalDistance = calculateTotalDistance(SpeedTier.NORMAL);
-            } else if (speed == SpeedTier.FAST) {
-                remainingFuel = calculateFuel(SpeedTier.FAST);
-                crashAccident = calculateAccident(SpeedTier.FAST);
-                finalDistance = calculateTotalDistance(SpeedTier.FAST);
-            } else {
-                return 0;
-            }
-        } while (remainingFuel > 0 && !crashAccident);
-
-        return finalDistance;
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource() == fast) {
+				curSpeed = SpeedTier.FAST;
+				currSpeed.setText("Current Speed: " + curSpeed);
+				curAccident.setText("Accident Change at current speed: " + (accidentChance * 2) + "%");
+			}
+			if(e.getSource() == cautious) {
+				curSpeed = SpeedTier.CAUTIOUS;
+				currSpeed.setText("Current Speed: " + curSpeed);
+				curAccident.setText("Accident Change at current speed: 0%");
+			}
+			if(e.getSource() == normal) {
+				curSpeed = SpeedTier.NORMAL;
+				currSpeed.setText("Current Speed: " + curSpeed);
+				curAccident.setText("Accident Change at current speed: " + accidentChance + "%");
+			}
+			if(e.getSource() == launch) {
+				flyTurn();
+			}
+			if(e.getSource() == proceed) {
+				advancePlayer();
+			}
+		}
+    	
     }
 }
