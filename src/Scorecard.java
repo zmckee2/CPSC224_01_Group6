@@ -1,7 +1,10 @@
-/** Scorecard.java
+/** 
+ * Scorecard.java
+ * This class creates a scorecard to hold the progress that a hand make during buildphase
  * 
- * @author Zach McKee, Kevin Hance, Andrew Yang
- *
+ * CPSC 224_01, Spring 2018
+ * @author Zach McKee
+ * @version 1.3 5/2/2018
  */
 public class Scorecard {
 	private boolean[] partsBuilt = new boolean[10]; //The first 9 elements are reserved for the rocket's parts.

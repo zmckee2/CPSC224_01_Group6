@@ -192,7 +192,7 @@ public class PlayGame extends JFrame {
 								 "The game is broken up into two sperate parts, named build phase and space phase\n" +
 								 "During the build phase you will roll for resources to build your rocket.\n" +
 								 "During space phase you will fly your rocket into space with the hopes of getting further than any other player\n" +
-								 "Make sure during build phase to complete your rocket, lest you don't want to participate in space phase.\n" +
+								 "Make sure during build phase to complete your rocket, lest you don't want to particitpate in space phase.\n" +
 								 "Once both phases have been played, a final winner will be decided based of who flew the furthst in space phase.\n" +
 								 "To fly furthest, you will need to build the best rocket you can in build phase and take risks during space phase.\n" +
 								 "The final winner is decided by whoever flew the furthest in space phase.");
@@ -234,7 +234,7 @@ public class PlayGame extends JFrame {
 								"The base distance you travel each turn is based off what tier of thruster you created.\n" +
 								"The chance you have for an accident is based of how many crew members you have. \n" +
 								"If you do have a random accident, you will not move at all for that turn but still use fuel.\n" +
-								"During each of your turns you will have three options. Each option has a different result in your progress.\n" +
+								"During each of your turns you will have three options. Each option has a diffrent result in your progress.\n" +
 								"Ahead cautious: You use two fuel, go your base distance, but have no chance for an accident.\n" +
 								"Ahead fast: You use two fuel, go three times your base distance, but have a higher chance of accident.\n" +
 								"Ahead standard: You use one fuel, go your base distance, and have an accident chance based off your crew members.\n" +
