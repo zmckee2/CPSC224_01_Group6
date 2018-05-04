@@ -1,3 +1,12 @@
+/**
+ * Hand.java
+ * This class creates objects to be used as players in space race yahtzee
+ * 
+ * CPSC 224_01, Spring 2018
+ * @author Zach McKee, Kevin Hance
+ * @version 1.3 5/2/2018
+ */
+
 import java.util.Arrays;
 import java.util.Random;
 public class Hand {
@@ -165,10 +174,20 @@ public class Hand {
 		return handScorecard.checkRocketComplete();
 	}
 	
+	/**
+	 * getFinalDistance
+	 * This method returns the final distance a hand has on record
+	 * @return finalDistance
+	 */
 	public int getFinalDistance() {
 		return handScorecard.getFinalDistance();
 	}
 	
+	/**
+	 * numberOfHullParts
+	 * This method returns how many hull parts a hand has
+	 * @return number of Hull Parts
+	 */
 	public int numberOfHullParts(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
@@ -178,6 +197,11 @@ public class Hand {
 		return num;
 	}
 	
+	/**
+	 * numberOfElectronics
+	 * This method returns how many electronics a hand has
+	 * @return number of Electronics
+	 */
 	public int numberOfElectronics(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
@@ -187,6 +211,11 @@ public class Hand {
 		return num;
 	}
 	
+	/**
+	 * numbeOfGlass
+	 * This method returns how much glass a hand has
+	 * @return number of Glass
+	 */
 	public int numberOfGlass(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
@@ -196,6 +225,11 @@ public class Hand {
 		return num;
 	}
 	
+	/**
+	 * numberOfCrewMembers
+	 * This method returns how many crew members a hand has
+	 * @return number of Crew Members
+	 */
 	public int numberOfCrewMembers(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){
@@ -205,6 +239,11 @@ public class Hand {
 		return num;
 	}
 	
+	/**
+	 * numberOfFuel
+	 * This method returns how much fuel a hand has
+	 * @return number of Fuel
+	 */
 	public int numberOfFuel(){
 		int num = 0;
 		for(int i = 0; i < 5; i++){

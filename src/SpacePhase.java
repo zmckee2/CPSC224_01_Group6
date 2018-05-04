@@ -1,8 +1,10 @@
 /**
- * class SpacePhase
- *  cautious: distance * 1   fuel -2    accident 0%
- *  normal:   distance * 1   fuel -1    accident 20% - crew members * 4
- *  fast:     distance * 3   fuel -2    accident (20% - crew members * 4) * 2
+ * SpacePhase.java
+ * This class lets people play space phase in space race yahtzee
+ * 
+ * CPSC 224_01, Spring 2018
+ * @author Andrew Yang, Zach McKee
+ * @version 1.3 5/2/2018
  */
 
 import java.awt.BorderLayout;
@@ -106,7 +108,10 @@ public class SpacePhase extends PicturePanel{
     	advancePlayer();
     }
 
-    
+    /**
+     * advancePlayer
+     * This method advances the current player and refreshes the GUI accordingly
+     */
     private void advancePlayer() {
     	if(currentPlayer < players.length - 1) {
     		currentPlayer++;
@@ -115,6 +120,7 @@ public class SpacePhase extends PicturePanel{
     		accidentChance = 20 - (tempScore[0] * 4);
     		rocketTier = tempScore[2];
     		currentDistance = 0;
+    		totalDistance = 0;
     		distance.setText("Current Distance: " + currentDistance);
     		fuelLeft.setText("Current fuel: " + tempScore[1]);
     		curAccident.setText("Accident chance at current speed: " + accidentChance + "%");
@@ -219,6 +225,10 @@ public class SpacePhase extends PicturePanel{
         return dhere;
     }
     
+    /**
+     * flyTurn
+     * This method runs through a turn of space phase given the current speed
+     */
     private void flyTurn() {
     	int distanceNow = calculateTotalDistance(curSpeed);
     	boolean accidentNow = calculateAccident(curSpeed);

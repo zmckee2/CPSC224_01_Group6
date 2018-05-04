@@ -1,3 +1,11 @@
+/**
+ * BuildPhase.java
+ * This class lets people play the build phase of space race yahtzee
+ * 
+ * CPSC 224_01, Spring 2018
+ * @author Kevin Hance, Zach McKee
+ * @verison 1.7 5/2/2018
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,8 +20,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-
-
 
 
 public class BuildPhase extends PicturePanel{
@@ -766,7 +772,7 @@ public class BuildPhase extends PicturePanel{
 					
 				}
 			if(e.getSource() == proceed) {
-				if(roundNum < 9) {
+				if(roundNum < 9 || (activePlayerNum <= (players.length - 1))) {
 					if(activePlayerNum == (players.length - 1)) {
 						roundNum++;
 						roundNumL.setText("Round: " + (roundNum + 1));
