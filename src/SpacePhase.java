@@ -5,7 +5,12 @@
  *  fast:     distance * 3   fuel -2    accident (20% - crew members * 4) * 2
  */
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -38,9 +43,9 @@ public class SpacePhase extends PicturePanel{
      * corresponding to each player
      * @return: n/a
      */
-    public SpacePhase(Hand[] players, PlayGame activeWindow){
+    public SpacePhase(Hand[] Iplayers, PlayGame activeWindow){
     	super("space.jpg");
-    	this.players = players;
+    	players = Iplayers;
     	this.activeWindow = activeWindow;
     	cautious = new JButton("Cautious");
     	normal = new JButton("Normal");
@@ -57,18 +62,46 @@ public class SpacePhase extends PicturePanel{
     	curAccident = new JLabel();
     	currSpeed = new JLabel();
     	output = new JTextArea();
+    	output.setOpaque(false);
+    	Dimension size = new Dimension(800, 100);
+    	output.setPreferredSize(size);
+    	output.setFont(new Font("Hind", Font.PLAIN, 40));
+    	output.setWrapStyleWord(true);
       	output.setEditable(false);
+      	output.setForeground(Color.WHITE);
+      	distance.setFont(new Font("Hind", Font.PLAIN, 20));
+      	fuelLeft.setFont(new Font("Hind", Font.PLAIN, 20));
+      	curAccident.setFont(new Font("Hind", Font.PLAIN, 16));
+      	currSpeed.setFont(new Font("Hind", Font.PLAIN, 20));
+      	cautious.setFont(new Font("Hind", Font.PLAIN, 20));
+      	fast.setFont(new Font("Hind", Font.PLAIN, 20));
+      	normal.setFont(new Font("Hind", Font.PLAIN, 20));
+      	launch.setFont(new Font("Hind", Font.PLAIN, 20));
+      	proceed.setFont(new Font("Hind", Font.PLAIN, 20));
+      	distance.setForeground(Color.white);
+      	fuelLeft.setForeground(Color.white);
+      	curAccident.setForeground(Color.white);
+      	currSpeed.setForeground(Color.white);
     	
-    	this.add(cautious);
-    	this.add(normal);
-    	this.add(fast);
-    	this.add(proceed);
-    	this.add(fuelLeft);
-    	this.add(distance);
-    	this.add(output);
-    	this.add(launch);
-    	this.add(currSpeed);
-    	this.add(curAccident);
+      	JPanel firstFrame = new JPanel();
+      	JPanel buttonFrame = new JPanel();
+      	firstFrame.setOpaque(false);
+      	buttonFrame.setOpaque(false);
+      	buttonFrame.setLayout(new GridLayout(3,3,50,75));
+      	firstFrame.setLayout(new BorderLayout());
+    	buttonFrame.add(cautious);
+    	buttonFrame.add(curAccident);
+    	buttonFrame.add(distance);
+    	buttonFrame.add(normal);
+    	buttonFrame.add(launch);
+    	buttonFrame.add(fuelLeft);
+    	buttonFrame.add(fast);
+    	buttonFrame.add(proceed);
+    	buttonFrame.add(currSpeed);
+    	firstFrame.add(output, BorderLayout.NORTH);
+    	firstFrame.add(buttonFrame, BorderLayout.CENTER);
+    	this.setLayout(new BorderLayout());
+    	this.add(firstFrame, BorderLayout.CENTER);
     	currentPlayer = -1;
     	advancePlayer();
     }
@@ -81,9 +114,10 @@ public class SpacePhase extends PicturePanel{
     		tempScore = curHand.readScore();
     		accidentChance = 20 - (tempScore[0] * 4);
     		rocketTier = tempScore[2];
+    		currentDistance = 0;
     		distance.setText("Current Distance: " + currentDistance);
     		fuelLeft.setText("Current fuel: " + tempScore[1]);
-    		curAccident.setText("Accident Change at current speed: " + accidentChance);
+    		curAccident.setText("Accident chance at current speed: " + accidentChance + "%");
     		curSpeed = SpeedTier.NORMAL;
     		totalFuel = tempScore[1];
     		
@@ -98,7 +132,8 @@ public class SpacePhase extends PicturePanel{
     			launch.setEnabled(true);
     		}
     		else {
-    			output.setText("Too bad Player " + (currentPlayer + 1) + ", you didn't complete your rocket. Please click proceed.");
+    			output.setText("Too bad Player " + (currentPlayer + 1) + ", you didn't complete your rocket.\nPlease click proceed.");
+    			players[currentPlayer].recordFinalDistance(0);
     			proceed.setEnabled(true);
     			proceed.setBackground(Color.green);
     			normal.setEnabled(false);
@@ -107,7 +142,15 @@ public class SpacePhase extends PicturePanel{
     			launch.setEnabled(false);
     		}
     	} else {
-    		activeWindow.endGame();
+    		int[] distances = new int[players.length];
+    		int winner = 0;
+    		for(int i = 0; i < players.length; i++) {
+    			distances[i] = players[i].getFinalDistance();
+    			if(players[i].getFinalDistance() > winner) {
+    				winner = (i+1);
+    			}
+    		}
+    		activeWindow.endGame(distances, winner);
     	}
     }
 
@@ -181,7 +224,7 @@ public class SpacePhase extends PicturePanel{
     	boolean accidentNow = calculateAccident(curSpeed);
     	int fuelLost = calculateFuel(curSpeed);
     	if(accidentNow) {
-    		output.setText("You had an accident! You gain no distance but still burn fuel.");
+    		output.setText("You had an accident! You gain no distance,\nbut still burn fuel.");
     	} else {
     		output.setText("Success! You go " + distanceNow + "km");
     		totalDistance += distanceNow;
@@ -197,7 +240,7 @@ public class SpacePhase extends PicturePanel{
     		cautious.setEnabled(false);
     		normal.setEnabled(false);
     		launch.setEnabled(false);
-    		curHand.recordFinalDistance(totalDistance);
+    		players[currentPlayer].recordFinalDistance(totalDistance);
     	}
     	if(totalFuel == 1) {
     		fast.setEnabled(false);
@@ -215,17 +258,17 @@ public class SpacePhase extends PicturePanel{
 			if(e.getSource() == fast) {
 				curSpeed = SpeedTier.FAST;
 				currSpeed.setText("Current Speed: " + curSpeed);
-				curAccident.setText("Accident Change at current speed: " + (accidentChance * 2) + "%");
+				curAccident.setText("Accident Chance at current speed: " + (accidentChance * 2) + "%");
 			}
 			if(e.getSource() == cautious) {
 				curSpeed = SpeedTier.CAUTIOUS;
 				currSpeed.setText("Current Speed: " + curSpeed);
-				curAccident.setText("Accident Change at current speed: 0%");
+				curAccident.setText("Accident Chance at current speed: 0%");
 			}
 			if(e.getSource() == normal) {
 				curSpeed = SpeedTier.NORMAL;
 				currSpeed.setText("Current Speed: " + curSpeed);
-				curAccident.setText("Accident Change at current speed: " + accidentChance + "%");
+				curAccident.setText("Accident Chance at current speed: " + accidentChance + "%");
 			}
 			if(e.getSource() == launch) {
 				flyTurn();

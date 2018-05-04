@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,26 +31,28 @@ public class BuildPhase extends PicturePanel{
 	boolean waitingForProceedButtonPress = false;
 	
 	//init all buttons
-	JButton ckpt1,ckpt2,ckpt3,thrst1,thrst2,thrst3,fres1,fres2,fres3,
+	private JButton ckpt1,ckpt2,ckpt3,thrst1,thrst2,thrst3,fres1,fres2,fres3,
 			addCrewMem,addFuel,die1,die2,die3,die4,die5,reroll,proceed,noMove;
 	
 	//init all labels
-	JLabel numCrewMem,maxCrewMem,numFuel,roundNumL,rollNumL,activePlayerNumL;
+	private JLabel numCrewMem,maxCrewMem,numFuel,roundNumL,rollNumL,activePlayerNumL;
 	
-	JTextArea ckptTips,thrstTips,fresTips,crewMemTips,fuelTips;
+	private JTextArea ckptTips,thrstTips,fresTips,crewMemTips,fuelTips;
 	
-	JTextArea debugConsole = new JTextArea();
+	private JTextArea debugConsole = new JTextArea();
 	//JScrollPane scrollPane = new JScrollPane(debugConsole, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	PlayGame activeWindow;
+	private PlayGame activeWindow;
 	
 	// dimension for Dice
 	Dimension dieDim = new Dimension(50,50);
 	
 	//setting button color defaults
-	Color red_btn = new Color(239,95,95);
-	Color blu_btn = new Color(111, 220, 237);
-	Color grn_btn = new Color(97,244,132);
-	Color gry_btn =	Color.GRAY;
+	private Color red_btn = new Color(239,95,95);
+	private Color blu_btn = new Color(111, 220, 237);
+	private Color grn_btn = new Color(97,244,132);
+	private Color gry_btn =	Color.GRAY;
+	private Color lim_fnt = new Color(114, 251, 81);
+	private Color blk_btn = new Color(5,32,48);
 	
 	boolean[] rerollDice = new boolean[5];
 	
@@ -58,9 +61,9 @@ public class BuildPhase extends PicturePanel{
 	 * This is the constructor for BuildPhase
 	 * @param array of Hands representing different players
 	 */
-	public BuildPhase(Hand[] initPlayers/*, /*PlayGame activeWindow*/){
+	public BuildPhase(Hand[] initPlayers, PlayGame activeWindow){
 		super("build.jpg");
-		//this.activeWindow = activeWindow;
+		this.activeWindow = activeWindow;
 		// init players and number of players
 		players = initPlayers;
 		numPlayers = players.length;
@@ -133,7 +136,7 @@ public class BuildPhase extends PicturePanel{
 		crewMemTips = new JTextArea();
 		fuelTips = new JTextArea();
 		
-		ckptTips.setText("Cost to build a Cockpit:                GLAS, ELEC, CREW, HULL");
+		/*ckptTips.setText("Cost to build a Cockpit:                GLAS, ELEC, CREW, HULL");
 		thrstTips.setText("Cost to build a Thruster:               FUEL, ELEC, HULL, HULL");
 		fresTips.setText("Cost to build Fuel Reserves:         FUEL, FUEL, ELEC, HULL");
 		crewMemTips.setText("Cost to add a Crew Member:       At least 3 CREW, and Cockpit  Mk1 must be built");
@@ -170,7 +173,23 @@ public class BuildPhase extends PicturePanel{
 		thrstTips.setLineWrap(true);
 		fresTips.setLineWrap(true);
 		crewMemTips.setLineWrap(true);
-		fuelTips.setLineWrap(true);
+		fuelTips.setLineWrap(true);*/
+		
+		ckptTips.setOpaque(false);
+		thrstTips.setOpaque(false);
+		fresTips.setOpaque(false);
+		crewMemTips.setOpaque(false);
+		fuelTips.setOpaque(false);
+		
+		ckptTips.setEditable(false);
+		thrstTips.setEditable(false);
+		fresTips.setEditable(false);
+		crewMemTips.setEditable(false);
+		fuelTips.setEditable(false);
+		
+		numCrewMem.setFont(new Font("Heid", Font.PLAIN, 16));
+		maxCrewMem.setFont(new Font("Heid", Font.PLAIN, 16));
+		numFuel.setFont(new Font("Heid", Font.PLAIN, 16));
 		
 		// init button listener
 		ListenForButton lForBtn = new ListenForButton();
@@ -290,12 +309,19 @@ public class BuildPhase extends PicturePanel{
 		activePlayerNumL.setText("Player: " + (activePlayerNum + 1));
 		roundNumL.setText("Round 1");
 		rollNumL.setText("Roll: 1");
+		roundNumL.setFont(new Font("Hide", Font.PLAIN, 25));
+		rollNumL.setFont(new Font("Hide", Font.PLAIN, 25));
+		activePlayerNumL.setFont(new Font("Hide", Font.PLAIN, 25));
+		roundNumL.setForeground(Color.WHITE);
+		rollNumL.setForeground(Color.WHITE);
+		activePlayerNumL.setForeground(Color.white);
 		for(int i = 0; i < 5; i++)
 			rerollDice[i] = false;
 		refreshBuildOptions(curHand);
 		rollResources(curHand,rerollDice);
 		updateDiceText();
 		debugConsole.setWrapStyleWord(true);
+		debugConsole.setFont(new Font("Heid", Font.PLAIN, 18));
 		debugConsole.setText("Please select dice to keep, click REROLL when finsihed");
 		this.setVisible(true);
 	}
@@ -509,7 +535,7 @@ public class BuildPhase extends PicturePanel{
 			if(h.checkPartBuilt(3))
 				fres1.setBackground(blu_btn);
 			if(h.checkPartBuilt(4))
-				fres3.setBackground(blu_btn);
+				fres2.setBackground(blu_btn);
 			if(h.checkPartBuilt(5))
 				fres3.setBackground(blu_btn);
 		} if(canAddCrewMembers(h)){
@@ -720,6 +746,7 @@ public class BuildPhase extends PicturePanel{
 				if(e.getSource() == reroll) {
 					if((rerollDice[0] && rerollDice[1] && rerollDice[2] && rerollDice[3] && rerollDice[4]) || rollNum == 3) {
 						updateBuildOptions(curHand);
+						reroll.setEnabled(false);
 					}
 					else if (rollNum < 2) {
 						rollResources(curHand, rerollDice);
@@ -730,6 +757,7 @@ public class BuildPhase extends PicturePanel{
 						rollResources(curHand, rerollDice);
 						updateDiceText();
 						updateBuildOptions(curHand);
+						reroll.setEnabled(false);
 					}
 					for(int din = 0; din < 5; din++) {
 						rerollDice[din] = false;
@@ -738,11 +766,12 @@ public class BuildPhase extends PicturePanel{
 					
 				}
 			if(e.getSource() == proceed) {
-				if(roundNum < 10) {
+				if(roundNum < 9) {
 					if(activePlayerNum == (players.length - 1)) {
 						roundNum++;
 						roundNumL.setText("Round: " + (roundNum + 1));
 					}
+					reroll.setEnabled(true);
 					ontoNext();
 				} else {
 					switchToSpace();

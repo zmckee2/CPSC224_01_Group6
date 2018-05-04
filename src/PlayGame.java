@@ -17,24 +17,25 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.awt.GridLayout;
 
 public class PlayGame extends JFrame {
-	private final int DEFAULT_WIDTH = 1000;
-	private final int DEFAULT_HEIGHT = 800;
-	private JButton play, instructions, exitInstructions, goToBuildInst, goToSpaceInst, backToBuildInst, backToIntroInst, start;
+	private final int DEFAULT_WIDTH = 1400;
+	private final int DEFAULT_HEIGHT = 900;
+	private JButton play, instructions, exitInstructions, goToBuildInst, goToSpaceInst, backToBuildInst, backToIntroInst, start, backToStart;
 	private JLabel title;
 	private JTextArea instructionText;
-	private PicturePanel introPanel, instructionPanel;
+	private PicturePanel introPanel, instructionPanel, finishPanel;
 	private JPanel buttonPanel, massContainer;
 	private CardLayout navi;
 	private JSlider numOfPlayers;
 	private Hand[] players;
 	private BuildPhase build;
 	private SpacePhase space;
-	private JFrame buildFrame;
+	private Color blk_btn = new Color(5,32,48);
+	private Color red_btn = new Color(253, 35, 96);
+	private Color prp_fnt = new Color(144,116,212);
+	private Color org_fnt = new Color(253, 150, 40);
 	
 	public static void main(String[] args) {
 		new PlayGame();
@@ -85,8 +86,8 @@ public class PlayGame extends JFrame {
 	private void createIntroPane() {
 		//Initilizing the intro panel using a background image
 		introPanel = new PicturePanel("intro.jpg");
-		title = new JLabel("Welcome to Space Race Yahtzee");
-		title.setFont(new Font("Helvetica", Font.PLAIN, 40));
+		title = new JLabel("SPACE RACE");
+		title.setFont(new Font("Hind", Font.BOLD, 60));
 		title.setHorizontalAlignment(JLabel.CENTER);
 		title.setForeground(Color.WHITE);
 		introPanel.setLayout(new GridLayout(2,1));
@@ -99,10 +100,16 @@ public class PlayGame extends JFrame {
 		buttonPanel.setLayout(new GridLayout(3,5));
 		play = new JButton("Play Game");
 		play.setToolTipText("Click to play a new game");
+		play.setFont(new Font("Hind", Font.PLAIN, 25));
 		play.addActionListener(new gameButtonListener());
 		instructions = new JButton("Instructions");
 		instructions.setToolTipText("Click to see the instructions");
+		instructions.setFont(new Font("Hind", Font.PLAIN, 25));
 		instructions.addActionListener(new gameButtonListener());
+		play.setBackground(red_btn);
+		instructions.setBackground(red_btn);
+		play.setForeground(blk_btn);
+		instructions.setForeground(blk_btn);
 		for(int i = 0; i < 6; i++)
 			buttonPanel.add(new JLabel());
 		buttonPanel.add(play);
@@ -112,7 +119,6 @@ public class PlayGame extends JFrame {
 			buttonPanel.add(new JLabel());
 		
 		introPanel.add(buttonPanel);
-		//navi.addLayoutComponent(introPanel, "intro");
 		
 		massContainer.add(introPanel, "intro");
 		navi.show(massContainer, "intro");
@@ -124,7 +130,7 @@ public class PlayGame extends JFrame {
 	 */
 	private void createInstructionPane() {
 		//Initilizing the panel with a background image
-		instructionPanel = new PicturePanel("instructions.jpg");
+		instructionPanel = new PicturePanel("intro.jpg");
 		instructionPanel.setLayout(new BorderLayout());
 		//Creating the text field to contain all the instructions
 		instructionText = new JTextArea();
@@ -182,8 +188,7 @@ public class PlayGame extends JFrame {
 	 * I made a seperate function to make it easier to read
 	 */
 	private void writeInstructions() {
-		instructionText.setText("~~~~Space Race Yahtzee Rules~~~~\n" +
-								 "In Space Race Yahtzee you compete with up to four players to get the furthest in space!\n" +
+		instructionText.setText( "In Space Race Yahtzee you compete with up to four players to get the furthest in space!\n" +
 								 "The game is broken up into two sperate parts, named build phase and space phase\n" +
 								 "During the build phase you will roll for resources to build your rocket.\n" +
 								 "During space phase you will fly your rocket into space with the hopes of getting further than any other player\n" +
@@ -261,6 +266,9 @@ public class PlayGame extends JFrame {
 		numOfPlayers.setForeground(Color.white);
 		start = new JButton("Start game");
 		start.addActionListener(new gameButtonListener());
+		start.setFont(new Font("Hide", Font.PLAIN, 28));
+		start.setBackground(red_btn);
+		start.setForeground(blk_btn);
 		getPlayersPanel.add(numOfPlayers);
 		//Creating a new panel to have on the bottom to make the button centered, but not massive or tiny
 		JPanel adjustmentPanel = new JPanel();
@@ -278,36 +286,52 @@ public class PlayGame extends JFrame {
 	 * This method changes the the frame to run build phase
 	 */
 	private void switchToBuildPhase() {
-		Hand[] work = {new Hand(), new Hand()};
-		build = new BuildPhase(players);
+		build = new BuildPhase(players, this);
 		massContainer.add(build, "BuildPhase");
 		navi.show(massContainer, "BuildPhase");
+		//switchPhases();
 	}
 	
 	public void switchPhases() {
-		build.setVisible(false);
-		this.setVisible(true);
-		space = new SpacePhase(players);
-		this.add(space,this);
+		/*Hand cheat = new Hand();
+		cheat.buildPart(0);
+		cheat.buildPart(3);
+		cheat.buildPart(6);
+		cheat.addCommodity(0);
+		cheat.addCommodity(1);
+		cheat.addCommodity(1);
+		cheat.addCommodity(1);
+		cheat.addCommodity(1);
+		cheat.addCommodity(1);
+		cheat.addCommodity(1);
+		Hand fil = new Hand();
+		Hand[] b = {fil, cheat};*/
+		space = new SpacePhase(players, this);
+		massContainer.add(space, "SpacePhase");
+		navi.show(massContainer, "SpacePhase");
 	}
 	
-	public void endGame() {
-		space.setVisible(false);
-		int[] distances = new int[players.length];
-		for(int i = 0; i < players.length; i++) {
-			distances[i] = players[i].getFinalDistance();
-		}
-		PicturePanel finishPanel = new PicturePanel("victory.jpg");
+	public void endGame(int[] distances, int winner) {
+		finishPanel = new PicturePanel("victory.jpg");
 		JTextArea finalReport = new JTextArea();
+		backToStart = new JButton("New Game");
+		backToStart.addActionListener(new gameButtonListener());
 		finalReport.setOpaque(false);
 		finalReport.setEditable(false);
-		finalReport.setFont(new Font("Helvetica", Font.PLAIN, 18));
-		finalReport.setText("Final Disances:\n");
-		for(int i = 0; i < players.length; i--) {
-			finalReport.append("Player " + (i+1) + ": Distance of " + distances[i]);
+		finalReport.setFont(new Font("Helvetica", Font.PLAIN, 40));
+		finalReport.setForeground(Color.WHITE);
+		finalReport.setText("Final Distance:\n");
+		for(int i = 0; i < players.length; i++) {
+			finalReport.append("Player " + (i+1) + ": Distance of " + distances[i] + "km\n");
 		}
-		finishPanel.add(finalReport);
+		finalReport.append("Player " + winner + " wins!");
+		finishPanel.setLayout(new BorderLayout());
 		
+		finishPanel.add(finalReport, BorderLayout.CENTER);
+		finishPanel.add(backToStart, BorderLayout.SOUTH);
+		
+		massContainer.add(finishPanel, "finish");
+		navi.show(massContainer, "finish");
 	}
 	
 	/**
@@ -351,7 +375,9 @@ public class PlayGame extends JFrame {
 				initPlayers(numOfPlayers.getValue());
 				switchToBuildPhase();
 			}
-		
+			else if (e.getSource() == backToStart) {
+				createIntroPane();
+			}
 		}
 	}
 }
